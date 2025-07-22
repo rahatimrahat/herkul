@@ -8,4 +8,5 @@ export interface FingerprintData {
   visitorId: string;
   details: FingerprintDetails;
   entropy: number;
+  maxEntropy: number;
 }
