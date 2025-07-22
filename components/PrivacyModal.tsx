@@ -62,6 +62,9 @@ const PrivacyModal: React.FC<{ isOpen: boolean; onClose: () => void; }> = ({ isO
               <li><strong className="text-gray-300">Audio/Visual Stack:</strong> Audio context and available speech voices.</li>
               <li><strong className="text-gray-300">Fonts:</strong> A list of available system fonts.</li>
             </ul>
+            <p className="mt-3">
+              We have recently added <strong className="text-white">Canvas Fingerprinting</strong> to improve accuracy. This involves rendering a hidden graphic and text in your browser. Since every device has a slightly different setup (graphics card, drivers, fonts), the final image is unique and contributes significantly to the fingerprint's entropy without compromising your privacy.
+            </p>
           </div>
 
           <div className="bg-gray-800/50 p-5 rounded-lg border border-gray-700">
