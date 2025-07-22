@@ -10,19 +10,42 @@ const BEACON_ENDPOINT = 'https://your-serverless-function-endpoint.example.com/c
  * @param data The fingerprint data to send.
  */
 const sendDataToBeacon = (data: FingerprintData) => {
+  const body = JSON.stringify(data);
+  const blob = new Blob([body], { type: 'application/json' });
+
+  const fallbackToFetch = () => {
+    fetch(BEACON_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+      keepalive: true,
+    })
+      .then((res) => {
+        if (!res.ok) {
+          console.error(
+            `Failed to send fingerprint data via fetch: ${res.status}`,
+          );
+        }
+      })
+      .catch((err) => {
+        console.error('Error sending fingerprint data via fetch:', err);
+      });
+  };
+
   if (navigator.sendBeacon) {
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
     try {
-      // sendBeacon returns false if the browser is unable to queue the request.
       const success = navigator.sendBeacon(BEACON_ENDPOINT, blob);
       if (!success) {
-        console.warn('Fingerprint beacon could not be queued.');
+        console.warn('Fingerprint beacon could not be queued, falling back to fetch.');
+        fallbackToFetch();
       }
     } catch (e) {
       console.error('Error sending fingerprint beacon:', e);
+      fallbackToFetch();
     }
   } else {
-    console.warn('navigator.sendBeacon is not available in this browser.');
+    console.warn('navigator.sendBeacon is not available in this browser; using fetch instead.');
+    fallbackToFetch();
   }
 };
 
