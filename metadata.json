@@ -1,0 +1,8 @@
+{
+  "name": "Client Fingerprint Pro",
+  "description": "A sophisticated client-side fingerprinting service to identify visiting clients with a high entropy score. It generates an enhanced unique visitor ID for analytics purposes by collecting various browser signals.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
