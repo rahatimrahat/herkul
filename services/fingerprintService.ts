@@ -1,6 +1,30 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import type { FingerprintData, FingerprintDetails } from '../types';
 
+/**
+ * Calculates the Shannon entropy of fingerprint component values.
+ * @param details Fingerprint component details
+ */
+const calculateEntropy = (details: FingerprintDetails): { entropy: number; max: number } => {
+  const valuesString = Object.values(details)
+    .map((d) => JSON.stringify(d.value))
+    .join('');
+  const length = valuesString.length;
+  if (!length) {
+    return { entropy: 0, max: 0 };
+  }
+  const freq: Record<string, number> = {};
+  for (const char of valuesString) {
+    freq[char] = (freq[char] || 0) + 1;
+  }
+  let entropy = 0;
+  for (const count of Object.values(freq)) {
+    const p = count / length;
+    entropy -= p * Math.log2(p);
+  }
+  return { entropy, max: length * 8 };
+};
+
 // IMPORTANT: Replace this with your actual serverless function endpoint for data collection.
 const BEACON_ENDPOINT = 'https://your-serverless-function-endpoint.example.com/collect';
 
@@ -32,17 +56,22 @@ const sendDataToBeacon = (data: FingerprintData) => {
  * @returns A promise that resolves to the `FingerprintData`.
  */
 export const generateVisitorId = async (): Promise<FingerprintData> => {
-  // Load the FingerprintJS agent
-  const fp = await FingerprintJS.load();
-  
-  // Get the visitor identifier and detailed components
+  // Load the FingerprintJS agent with monitoring enabled to gather
+  // more detailed information about the environment
+  const fp = await FingerprintJS.load({ monitor: true });
+
+  // Get the visitor identifier and all available component details
   const result = await fp.get();
-  
+
+  const { entropy, max } = calculateEntropy(result.components as FingerprintDetails);
+
   const fingerprintData: FingerprintData = {
     visitorId: result.visitorId,
-    details: result.components,
-    // Calculate entropy based on the number of components successfully gathered
-    entropy: Object.keys(result.components).length,
+    details: result.components as FingerprintDetails,
+    entropy,
+    maxEntropy: max,
+    confidence: result.confidence?.score ?? 0,
+    version: result.version,
   };
 
   // Asynchronously send the collected data to the serverless function without waiting

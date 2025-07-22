@@ -69,6 +69,9 @@ const FingerprintDisplay: React.FC<{ data: FingerprintData }> = ({ data }) => {
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
         </div>
+        <p className="text-xs text-gray-400 mt-2">
+          FPJS v{data.version} &middot; Confidence {(data.confidence * 100).toFixed(1)}%
+        </p>
       </div>
       
       <div>

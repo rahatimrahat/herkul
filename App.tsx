@@ -54,7 +54,7 @@ const App: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1 flex justify-center items-center">
-                  <EntropyVisualizer entropy={fingerprint.entropy} maxEntropy={40} />
+                  <EntropyVisualizer entropy={fingerprint.entropy} maxEntropy={fingerprint.maxEntropy} />
                 </div>
                 <div className="lg:col-span-2">
                   <FingerprintDisplay data={fingerprint} />
