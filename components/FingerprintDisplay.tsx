@@ -41,11 +41,18 @@ const DetailItem: React.FC<{ label: string; detail: FingerprintDetailValue }> = 
 
 const FingerprintDisplay: React.FC<{ data: FingerprintData }> = ({ data }) => {
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState<string | null>(null);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(data.visitorId);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(data.visitorId);
+      setCopied(true);
+      setCopyError(null);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy visitor ID', err);
+      setCopyError('Unable to copy. Please copy manually.');
+    }
   };
 
   return (
@@ -69,6 +76,11 @@ const FingerprintDisplay: React.FC<{ data: FingerprintData }> = ({ data }) => {
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
         </div>
+        {copyError && (
+          <p className="mt-2 text-sm text-red-500">
+            {copyError}
+          </p>
+        )}
       </div>
       
       <div>
