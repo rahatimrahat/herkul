@@ -1,7 +1,7 @@
 import React from 'react';
 
 const EntropyVisualizer: React.FC<{ entropy: number; maxEntropy: number }> = ({ entropy, maxEntropy }) => {
-  const percentage = Math.min(100, (entropy / maxEntropy) * 100);
+  const percentage = maxEntropy ? Math.min(100, (entropy / maxEntropy) * 100) : 0;
   const circumference = 2 * Math.PI * 120; // 2 * pi * r
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
@@ -47,7 +47,7 @@ const EntropyVisualizer: React.FC<{ entropy: number; maxEntropy: number }> = ({ 
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={`text-6xl font-bold ${colorClass}`}>
-                {entropy}
+                {entropy.toFixed(2)}
             </span>
             <span className="text-lg font-medium text-gray-400">Entropy Score</span>
         </div>
