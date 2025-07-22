@@ -13,7 +13,7 @@ An advanced client-side identifier generator using high-entropy browser signals 
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/your-username/client-fingerprint-pro.git
+    git clone https://github.com/xxxxx
     ```
 2.  Install the dependencies:
     ```bash
