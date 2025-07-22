@@ -15,7 +15,7 @@ const getCanvasFingerprint = (): string | null => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
     
-    const txt = 'i9asdm..$#po((^@KbXrww!~cz';
+    const txt = `i9asdm..$#po((^@KbXrww!~cz${Math.random()}`;
     ctx.textBaseline = 'top';
     ctx.font = "14px 'Arial'";
     ctx.textBaseline = 'alphabetic';
@@ -47,6 +47,7 @@ const getWebGLDetails = (): Record<string, any> | null => {
             details.vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
             details.renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
         }
+        details.randomString = Math.random().toString(36).substring(7);
         
         details.supportedExtensions = gl.getSupportedExtensions();
 
@@ -81,7 +82,7 @@ const getAudioFingerprint = (): Promise<string | null> => {
 
             const oscillator = context.createOscillator();
             oscillator.type = 'triangle';
-            oscillator.frequency.setValueAtTime(10000, context.currentTime);
+            oscillator.frequency.setValueAtTime(10000 + Math.random() * 100, context.currentTime);
 
             const compressor = context.createDynamicsCompressor();
             compressor.threshold.setValueAtTime(-50, context.currentTime);
