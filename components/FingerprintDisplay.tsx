@@ -13,21 +13,28 @@ const CheckIcon: React.FC<{className?: string}> = ({ className }) => (
     </svg>
 );
 
-
-const DetailItem: React.FC<{ label: string; value: FingerprintDetailValue }> = ({ label, value }) => {
+const DetailItem: React.FC<{ label: string; detail: FingerprintDetailValue }> = ({ label, detail }) => {
   let displayValue: string;
-  if (value === null || value === undefined) {
+  const rawValue = detail.value;
+
+  if (rawValue === null || rawValue === undefined) {
     displayValue = 'N/A';
-  } else if (Array.isArray(value)) {
-    displayValue = value.length > 0 ? value.join(', ') : 'none';
+  } else if (Array.isArray(rawValue)) {
+    displayValue = rawValue.length > 0 ? rawValue.join(', ') : 'none';
+  } else if (typeof rawValue === 'object' && rawValue !== null) {
+    displayValue = JSON.stringify(rawValue);
   } else {
-    displayValue = String(value);
+    displayValue = String(rawValue);
   }
   
+  const isLongValue = displayValue.length > 150;
+
   return (
     <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:bg-gray-700/50 transition-colors">
       <p className="text-sm font-medium text-cyan-400 break-words">{label}</p>
-      <p className="text-base text-gray-300 break-all mt-1">{displayValue}</p>
+      <p className={`text-base text-gray-300 mt-1 ${isLongValue ? 'text-xs break-all' : 'break-words'}`}>
+        {isLongValue ? `${displayValue.substring(0, 150)}...` : displayValue}
+      </p>
     </div>
   );
 };
@@ -42,7 +49,7 @@ const FingerprintDisplay: React.FC<{ data: FingerprintData }> = ({ data }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <label className="text-sm font-medium text-gray-400">Unique Visitor ID</label>
         <div className="mt-1 flex rounded-lg shadow-sm">
@@ -63,11 +70,12 @@ const FingerprintDisplay: React.FC<{ data: FingerprintData }> = ({ data }) => {
           </button>
         </div>
       </div>
+      
       <div>
         <h3 className="text-lg font-semibold text-gray-200 mb-4">Fingerprint Components</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {Object.entries(data.details).map(([key, value]) => (
-            <DetailItem key={key} label={key} value={value} />
+          {Object.entries(data.details).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).map(([key, detail]) => (
+            <DetailItem key={key} label={key} detail={detail} />
           ))}
         </div>
       </div>
