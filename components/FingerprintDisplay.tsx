@@ -29,6 +29,17 @@ const DetailItem: React.FC<{ label: string; detail: FingerprintDetailValue }> = 
   
   const isLongValue = displayValue.length > 150;
 
+  if (label === 'canvas' && typeof rawValue === 'string' && rawValue.startsWith('data:image/png;base64,')) {
+    return (
+      <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:bg-gray-700/50 transition-colors">
+        <p className="text-sm font-medium text-cyan-400 break-words">{label}</p>
+        <div className="mt-2">
+          <img src={rawValue} alt="Canvas Fingerprint" className="max-w-full h-auto rounded-md border-2 border-gray-600" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:bg-gray-700/50 transition-colors">
       <p className="text-sm font-medium text-cyan-400 break-words">{label}</p>
