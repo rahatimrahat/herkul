@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import { generateVisitorId } from './services/fingerprintService';
 
 // Explicitly type process
@@ -10,7 +10,7 @@ const port = nodeProcess.env.PORT || 3000;
 app.use(express.json());
 
 // Endpoint to get the fingerprint
-app.get('/fingerprint', async (req: Request, res: Response) => {
+app.get('/fingerprint', async (res: Response) => {
   try {
     const fingerprintData = await generateVisitorId();
     res.json(fingerprintData);
