@@ -18,8 +18,8 @@ declare global {
   }
   // Define the interface for WEBGL_debug_renderer_info with the correct constants
   interface WEBGL_debug_renderer_info {
-    readonly UNMASKED_VENDOR_WEBGL: number;
-    readonly UNMASKED_RENDERER_WEBGL: number;
+    readonly UNMASKED_VENDOR_WEBGL: 37445;
+    readonly UNMASKED_RENDERER_WEBGL: 37446;
   }
   interface WebGLRenderingContext {
     getExtension(name: "WEBGL_debug_renderer_info"): WEBGL_debug_renderer_info | null;
@@ -107,8 +107,45 @@ const getAudioContextFingerprint = (): string => {
   }
 };
 
+/**
+ * Generates screen properties fingerprint.
+ */
+const getScreenProperties = (): FingerprintDetailValue => {
+  try {
+    const screenProps = {
+      width: screen.width,
+      height: screen.height,
+      colorDepth: screen.colorDepth,
+      pixelDepth: screen.pixelDepth,
+    };
+    return { value: JSON.stringify(screenProps) };
+  } catch (error) {
+    console.error('Error generating screen properties fingerprint:', error);
+    return { value: '' };
+  }
+};
 
 /**
+ * Generates platform information fingerprint.
+ */
+const getPlatformInfo = (): FingerprintDetailValue => {
+  try {
+    const platformInfo = {
+      platform: navigator.platform,
+      vendor: navigator.vendor,
+    };
+    return { value: JSON.stringify(platformInfo) };
+  } catch (error) {
+    console.error('Error generating platform info fingerprint:', error);
+    return { value: '' };
+  }
+};
+
+
+
+/**
+ * Calculates the Shannon entropy of fingerprint component values.
+ * Calculates the Shannon entropy of fingerprint component values.
  * Calculates the Shannon entropy of fingerprint component values.
  * @param details Fingerprint component details
  */
@@ -216,6 +253,18 @@ export const generateVisitorId = async (): Promise<FingerprintData> => {
     (result.components as FingerprintDetails).audioContext = { value: audioContextFingerprint };
   }
 
+  // Add screen properties
+  const screenProps = getScreenProperties();
+  if (screenProps.value) {
+    (result.components as FingerprintDetails).screen = screenProps;
+  }
+
+  // Add platform information
+  const platformInfo = getPlatformInfo();
+  if (platformInfo.value) {
+    (result.components as FingerprintDetails).platformInfo = platformInfo;
+  }
+
   const navigatorProps: Record<string, FingerprintDetailValue> = {};
   if (navigator.hardwareConcurrency) {
     navigatorProps['hardwareConcurrency'] = { value: navigator.hardwareConcurrency };
@@ -225,6 +274,13 @@ export const generateVisitorId = async (): Promise<FingerprintData> => {
   }
   if (navigator.languages && navigator.languages.length > 0) {
     navigatorProps['languages'] = { value: navigator.languages };
+  }
+  // Add platform and vendor
+  if (navigator.platform) {
+    navigatorProps['platform'] = { value: navigator.platform };
+  }
+  if (navigator.vendor) {
+    navigatorProps['vendor'] = { value: navigator.vendor };
   }
   try {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
