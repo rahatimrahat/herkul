@@ -11,6 +11,7 @@ COPY package*.json ./
 # Install dependencies, including devDependencies needed for ts-node
 # This command will install @fingerprintjs/fingerprintjs, express, typescript, ts-node, etc.
 RUN npm install
+RUN npm install --save-dev @types/node @types/express
 
 # Copy the rest of the application code
 COPY . .
