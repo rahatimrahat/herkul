@@ -35,7 +35,7 @@ A backend service that generates unique digital fingerprints for visitors using 
     ```bash
     npm run dev
     ```
-    This will start the server, typically on `http://localhost:3000`. You can then make requests to `/fingerprint` to test it.
+    This will start the server, typically on `http://localhost:3000`. You can then make POST requests to `/api/fingerprint` to send fingerprint data and test the API.
 
 5.  Run the service in production mode:
     ```bash
@@ -44,7 +44,7 @@ A backend service that generates unique digital fingerprints for visitors using 
 
 ## How it Works
 
-This service utilizes the `@fingerprintjs/fingerprintjs` library to generate a unique visitor identifier. It collects a wide range of browser signals, including:
+This service now acts as a backend API that receives fingerprint data generated client-side. The `@fingerprintjs/fingerprintjs` library, along with other browser APIs, is used in the frontend hook (`hooks/useFingerprint.ts`) to collect a wide range of browser signals, including:
 *   Canvas fingerprint
 *   WebGL vendor and renderer
 *   AudioContext processing
@@ -55,7 +55,7 @@ This service utilizes the `@fingerprintjs/fingerprintjs` library to generate a u
 *   Browser languages
 *   Timezone
 
-These collected details are then processed to calculate their Shannon entropy, providing a measure of uniqueness. Finally, the aggregated fingerprint data, including the visitor ID, details, entropy, and confidence score, is sent to the configured `BEACON_ENDPOINT`.
+These collected details are then processed to calculate their Shannon entropy, providing a measure of uniqueness. Finally, the aggregated fingerprint data, including the visitor ID, details, entropy, and confidence score, is sent to the backend API (`/api/fingerprint`). The `BEACON_ENDPOINT` is configured to point to this local API.
 
 ## Running via Docker
 
